@@ -15,9 +15,9 @@
             --text-dark: #333;
             --text-light: #fff;
             --shadow-color: rgba(31, 38, 135, 0.3);
-            /* --- UPDATED: New, stronger highlight colors --- */
-            --glow-current-strong: #ff8fab; /* Vibrant Pink/Red for current class */
-            --glow-next-day-noticeable: #a0c4ff; /* Noticeable Blue for next day's schedule */
+            /* --- NEW: Background colors for highlighting --- */
+            --bg-current-strong: #ff8fab; /* Vibrant Pink for current class */
+            --bg-next-day-light: #fefcbf;   /* Soft Yellow for next day's schedule */
         }
         body { margin: 0; padding: 2rem; font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .schedule-container { width: 100%; max-width: 1200px; background: var(--glass-bg); border-radius: 25px; padding: 2rem; box-shadow: 0 8px 32px var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
@@ -47,28 +47,32 @@
         td .teacher, td .chapter { font-size: 0.85rem; color: #555; }
         td .chapter { font-style: italic; }
 
-        /* --- UPDATED: Bolder Highlighting System --- */
+        /* --- UPDATED: Background Color Highlighting System --- */
         .next-day-highlight {
-            box-shadow: 0 0 15px 6px var(--glow-next-day-noticeable);
-            transform: scale(1.02); /* Slightly enlarges the cell to make it pop */
+            background-color: var(--bg-next-day-light);
+            transform: scale(1.02);
         }
         .current-class {
-            box-shadow: 0 0 18px 7px var(--glow-current-strong);
-            transform: scale(1.05); /* Enlarges it even more */
-            animation: glow-strong 1.5s infinite alternate;
+            background-color: var(--bg-current-strong);
+            color: var(--text-light); /* Make main text white */
+            transform: scale(1.05);
+            animation: pulse-current 1.5s infinite alternate;
             z-index: 10;
             position: relative;
         }
-        @keyframes glow-strong {
-            from { box-shadow: 0 0 12px 4px var(--glow-current-strong); }
-            to { box-shadow: 0 0 22px 9px var(--glow-current-strong); }
+        /* Make sure nested text also becomes white for readability */
+        .current-class .subject, .current-class .teacher, .current-class .chapter {
+            color: var(--text-light);
+        }
+        @keyframes pulse-current {
+            from { opacity: 1; }
+            to { opacity: 0.9; }
         }
 
-        @media print { body { background: none; padding: 0; } .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; } .header, .tab-navigation { display: none; } td, th { border: 1px solid #ccc; } td .subject { color: #000; } td .teacher, td .chapter { color: #333; } }
+        @media print { body { background: none; padding: 0; } .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; } .header, .tab-navigation { display: none; } td, th { border: 1px solid #ccc; } td { background-color: #fff !important; color: #000 !important; } td div { color: #000 !important; } }
     </style>
 </head>
 <body>
-    <!-- The rest of your HTML (body, tables, etc.) remains exactly the same. -->
     <div class="schedule-container">
         <header class="header">
             <button class="print-btn" id="print-button">🖨️ Print</button>
@@ -104,7 +108,6 @@
             };
             const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
             const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
-
             function generateTables() {
                 const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') };
                 const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`;
@@ -134,7 +137,6 @@
                     containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`;
                 }
             }
-            
             function setupTabs() {
                 const tabs = document.querySelectorAll('.tab-btn');
                 const contents = document.querySelectorAll('.tab-content');
@@ -161,7 +163,6 @@
                     });
                 });
             }
-            
             function setupHighlights() {
                 const now = new Date();
                 const currentDayIndex = now.getDay();
@@ -196,9 +197,7 @@
                     }
                 }
             }
-
             function setupPrint() { document.getElementById('print-button').addEventListener('click', () => window.print()); }
-
             generateTables();
             setupTabs();
             setupHighlights();
