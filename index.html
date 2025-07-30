@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1200">
-    <title>Class Schedule</title>
+    <title>Class Schedule & Resources</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
@@ -15,9 +15,8 @@
             --text-dark: #333;
             --text-light: #fff;
             --shadow-color: rgba(31, 38, 135, 0.3);
-            /* --- UPDATED: New Sky Blue & Orange Highlight Colors --- */
-            --bg-current-strong: #ff9800; /* Vibrant Orange for current class */
-            --bg-next-day-light: #b3e5fc;   /* Soft Sky Blue for next day's schedule */
+            --bg-current-strong: #ff9800;
+            --bg-next-day-light: #b3e5fc;
         }
         body { margin: 0; padding: 2rem; font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .schedule-container { width: 100%; max-width: 1200px; background: var(--glass-bg); border-radius: 25px; padding: 2rem; box-shadow: 0 8px 32px var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
@@ -38,30 +37,55 @@
         thead th { color: var(--text-light); font-weight: 700; font-size: 1.05rem; background-color: #ff8fab; }
         td { background-color: var(--text-light); font-weight: 700; color: var(--text-dark); }
         tbody td:first-child { color: var(--text-light); font-weight: 700; font-size: 1.05rem; width: 15%; }
-        tbody tr:nth-of-type(1) td:first-child { background-color: #fec89a; }
-        tbody tr:nth-of-type(2) td:first-child { background-color: #90dbf4; }
-        tbody tr:nth-of-type(3) td:first-child { background-color: #a0c4ff; }
-        tbody tr:nth-of-type(4) td:first-child { background-color: #80ed99; }
-        tbody tr:nth-of-type(5) td:first-child { background-color: #bdb2ff; }
-        td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); }
-        td .teacher, td .chapter { font-size: 0.85rem; color: #555; }
-        td .chapter { font-style: italic; }
-        .next-day-highlight {
-            background-color: var(--bg-next-day-light);
-            transform: scale(1.02);
-        }
-        .current-class {
-            background-color: var(--bg-current-strong);
-            color: var(--text-light);
-            transform: scale(1.05);
-            animation: pulse-current 1.5s infinite alternate;
-            z-index: 10;
-            position: relative;
-        }
-        .current-class .subject, .current-class .teacher, .current-class .chapter {
-            color: var(--text-light);
-        }
+        tbody tr:nth-of-type(1) td:first-child { background-color: #fec89a; } tbody tr:nth-of-type(2) td:first-child { background-color: #90dbf4; } tbody tr:nth-of-type(3) td:first-child { background-color: #a0c4ff; } tbody tr:nth-of-type(4) td:first-child { background-color: #80ed99; } tbody tr:nth-of-type(5) td:first-child { background-color: #bdb2ff; }
+        td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); } td .teacher, td .chapter { font-size: 0.85rem; color: #555; } td .chapter { font-style: italic; }
+        .next-day-highlight { background-color: var(--bg-next-day-light); transform: scale(1.02); }
+        .current-class { background-color: var(--bg-current-strong); color: var(--text-light); transform: scale(1.05); animation: pulse-current 1.5s infinite alternate; z-index: 10; position: relative; }
+        .current-class .subject, .current-class .teacher, .current-class .chapter { color: var(--text-light); }
         @keyframes pulse-current { from { opacity: 1; } to { opacity: 0.9; } }
+        
+        /* --- Styles for the Book Library Accordion --- */
+        .book-category { margin-bottom: 10px; }
+        .category-header {
+            background: rgba(255,255,255,0.7);
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-header:hover { background: #fff; }
+        .category-header::after {
+            content: '▼';
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        .category-header.active::after {
+            transform: rotate(180deg);
+        }
+        .book-list {
+            padding-left: 25px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .pdf-link {
+            display: block;
+            background: rgba(255,255,255,0.5);
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .pdf-link:hover { background: #fff; transform: translateX(5px); }
+        
         @media print { body { background: none; padding: 0; } .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; } .header, .tab-navigation { display: none; } td, th { border: 1px solid #ccc; } td { background-color: #fff !important; color: #000 !important; } td div { color: #000 !important; } }
     </style>
 </head>
@@ -78,6 +102,7 @@
             <button class="tab-btn" data-tab="chapters">Chapters</button>
             <button class="tab-btn" data-tab="all">All Combined</button>
             <button class="tab-btn" data-tab="notice">Notice Board</button>
+            <button class="tab-btn" data-tab="books">Books</button>
         </nav>
         <div class="content-wrapper">
             <div id="teachers" class="tab-content active"></div>
@@ -85,110 +110,53 @@
             <div id="chapters" class="tab-content"></div>
             <div id="all" class="tab-content"></div>
             <div id="notice" class="tab-content"><p>Loading notices...</p></div>
+            <div id="books" class="tab-content"></div>
         </div>
     </div>
+
+    <!-- This line loads your book library data -->
+    <script src="book-data.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
-            const routineData = {
-                'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' }, 'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' }, 'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' },
-                'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' }, 'MONDAY_4': 'NM-PHY',
-                'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' }, 'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'TUESDAY_4': 'STAT-NM',
-                'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'WEDNESDAY_4': 'NM-ARJ',
-                'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' }, 'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'THURSDAY_4': 'NM-MR'
-            };
+            const routineData = { 'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' }, 'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' }, 'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' }, 'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' }, 'MONDAY_4': 'NM-PHY', 'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' }, 'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'TUESDAY_4': 'STAT-NM', 'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'WEDNESDAY_4': 'NM-ARJ', 'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' }, 'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'THURSDAY_4': 'NM-MR' };
             const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
             const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
-            function generateTables() {
-                const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') };
-                const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`;
-                for (const type in containers) {
-                    if (!containers[type]) continue;
-                    let tableBodyHTML = '<tbody>';
-                    days.forEach(day => {
-                        tableBodyHTML += `<tr><td><strong>${day}</strong></td>`;
-                        timeSlots.forEach((time, index) => {
-                            const key = `${day}_${index + 1}`;
-                            const data = routineData[key];
-                            let cellContent = '';
-                            if (typeof data === 'string') { cellContent = data; } 
-                            else if (data) {
-                                switch (type) {
-                                    case 'teachers': cellContent = `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})`; break;
-                                    case 'subjects': cellContent = data.subject; break;
-                                    case 'chapters': cellContent = data.chapter; break;
-                                    case 'all': cellContent = `<div class="subject">${data.subject}</div><div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div><div class="chapter">${data.chapter}</div>`; break;
-                                }
-                            }
-                            tableBodyHTML += `<td>${cellContent}</td>`;
-                        });
-                        tableBodyHTML += '</tr>';
+            
+            function generateBookLibrary() {
+                const bookContainer = document.getElementById('books');
+                if (!bookContainer || typeof bookLibrary === 'undefined') return;
+                function buildList(items) {
+                    let html = '';
+                    items.forEach(item => {
+                        if (item.content) {
+                            html += `<div class="book-category"><div class="category-header">${item.category}</div><div class="book-list">${buildList(item.content)}</div></div>`;
+                        } else {
+                            html += `<a href="${item.link}" target="_blank" class="pdf-link">${item.name}</a>`;
+                        }
                     });
-                    tableBodyHTML += '</tbody>';
-                    containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`;
+                    return html;
                 }
-            }
-            function setupTabs() {
-                const tabs = document.querySelectorAll('.tab-btn');
-                const contents = document.querySelectorAll('.tab-content');
-                let noticeLoaded = false;
-                async function loadNoticeContent() {
-                    if (!noticeLoaded) {
-                        try {
-                            const response = await fetch('notice.html');
-                            if (!response.ok) throw new Error('notice.html not found!');
-                            const content = await response.text();
-                            document.getElementById('notice').innerHTML = content;
-                            noticeLoaded = true;
-                        } catch (error) { console.error('Could not load notices:', error); document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`; }
-                    }
-                }
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        const targetTabId = tab.dataset.tab;
-                        if (targetTabId === 'notice') loadNoticeContent();
-                        tabs.forEach(item => item.classList.remove('active'));
-                        contents.forEach(item => item.classList.remove('active'));
-                        tab.classList.add('active');
-                        document.getElementById(targetTabId).classList.add('active');
+                bookContainer.innerHTML = buildList(bookLibrary);
+                bookContainer.querySelectorAll('.category-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        header.classList.toggle('active');
+                        const content = header.nextElementSibling;
+                        if (content.style.maxHeight) {
+                            content.style.maxHeight = null;
+                        } else {
+                            content.style.maxHeight = content.scrollHeight + "px";
+                        }
                     });
                 });
             }
-            function setupHighlights() {
-                const now = new Date();
-                const currentDayIndex = now.getDay();
-                const currentTime = now.getHours() + now.getMinutes() / 60;
-                const classEndTime = 12.75;
-                const dayMap = [0, 1, 2, 3, 4, 5, 6]; 
-                let nextDayToHighlight = -1;
-                if (dayMap[currentDayIndex] < 4 && currentTime >= classEndTime) {
-                    nextDayToHighlight = dayMap[currentDayIndex] + 1;
-                } else if (dayMap[currentDayIndex] === 4 && currentTime >= classEndTime) {
-                    nextDayToHighlight = 0;
-                } else if (dayMap[currentDayIndex] > 4) {
-                    nextDayToHighlight = 0;
-                }
-                if (nextDayToHighlight !== -1) {
-                    document.querySelectorAll(`table tbody tr:nth-child(${nextDayToHighlight + 1}) td:not(:first-child)`)
-                        .forEach(cell => cell.classList.add('next-day-highlight'));
-                }
-                const todayIndex = dayMap[currentDayIndex];
-                if (todayIndex >= 0 && todayIndex <= 4) {
-                    let timeIndex = -1;
-                    const timeRanges = [ { start: 9.75, end: 10.5 }, { start: 10.5, end: 11.25 }, { start: 11.25, end: 12.0 }, { start: 12.0, end: 12.75 } ];
-                    for (let i = 0; i < timeRanges.length; i++) {
-                        if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) {
-                            timeIndex = i;
-                            break;
-                        }
-                    }
-                    if (timeIndex !== -1) {
-                        document.querySelectorAll(`table tbody tr:nth-child(${todayIndex + 1}) td:nth-child(${timeIndex + 2})`)
-                            .forEach(cell => cell.classList.add('current-class'));
-                    }
-                }
-            }
+
+            function generateTables() { const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') }; const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`; for (const type in containers) { if (!containers[type]) continue; let tableBodyHTML = '<tbody>'; days.forEach(day => { tableBodyHTML += `<tr><td><strong>${day}</strong></td>`; timeSlots.forEach((time, index) => { const key = `${day}_${index + 1}`; const data = routineData[key]; let cellContent = ''; if (typeof data === 'string') { cellContent = data; }  else if (data) { switch (type) { case 'teachers': cellContent = `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})`; break; case 'subjects': cellContent = data.subject; break; case 'chapters': cellContent = data.chapter; break; case 'all': cellContent = `<div class="subject">${data.subject}</div><div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div><div class="chapter">${data.chapter}</div>`; break; } } tableBodyHTML += `<td>${cellContent}</td>`; }); tableBodyHTML += '</tr>'; }); tableBodyHTML += '</tbody>'; containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`; } }
+            function setupTabs() { const tabs = document.querySelectorAll('.tab-btn'); const contents = document.querySelectorAll('.tab-content'); let noticeLoaded = false; let booksLoaded = false; async function loadNoticeContent() { if (!noticeLoaded) { try { const response = await fetch('notice.html'); if (!response.ok) throw new Error('notice.html not found!'); const content = await response.text(); document.getElementById('notice').innerHTML = content; noticeLoaded = true; } catch (error) { console.error('Could not load notices:', error); document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`; } } } tabs.forEach(tab => { tab.addEventListener('click', () => { const targetTabId = tab.dataset.tab; if (targetTabId === 'notice') loadNoticeContent(); if (targetTabId === 'books' && !booksLoaded) { generateBookLibrary(); booksLoaded = true; } tabs.forEach(item => item.classList.remove('active')); contents.forEach(item => item.classList.remove('active')); tab.classList.add('active'); document.getElementById(targetTabId).classList.add('active'); }); }); }
+            function setupHighlights() { const now = new Date(); const currentDayIndex = now.getDay(); const currentTime = now.getHours() + now.getMinutes() / 60; const classEndTime = 12.75; const dayMap = [0, 1, 2, 3, 4, 5, 6]; let nextDayToHighlight = -1; if (dayMap[currentDayIndex] < 4 && currentTime >= classEndTime) { nextDayToHighlight = dayMap[currentDayIndex] + 1; } else if (dayMap[currentDayIndex] === 4 && currentTime >= classEndTime) { nextDayToHighlight = 0; } else if (dayMap[currentDayIndex] > 4) { nextDayToHighlight = 0; } if (nextDayToHighlight !== -1) { document.querySelectorAll(`table tbody tr:nth-child(${nextDayToHighlight + 1}) td:not(:first-child)`).forEach(cell => cell.classList.add('next-day-highlight')); } const todayIndex = dayMap[currentDayIndex]; if (todayIndex >= 0 && todayIndex <= 4) { let timeIndex = -1; const timeRanges = [ { start: 9.75, end: 10.5 }, { start: 10.5, end: 11.25 }, { start: 11.25, end: 12.0 }, { start: 12.0, end: 12.75 } ]; for (let i = 0; i < timeRanges.length; i++) { if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) { timeIndex = i; break; } } if (timeIndex !== -1) { document.querySelectorAll(`table tbody tr:nth-child(${todayIndex + 1}) td:nth-child(${timeIndex + 2})`).forEach(cell => cell.classList.add('current-class')); } } }
             function setupPrint() { document.getElementById('print-button').addEventListener('click', () => window.print()); }
+
             generateTables();
             setupTabs();
             setupHighlights();
