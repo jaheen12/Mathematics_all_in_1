@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200">
+    <title>Class Schedule</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3D52A0;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-dark: #333;
+            --text-light: #fff;
+            --shadow-color: rgba(31, 38, 135, 0.3);
+            --glow-color: #ff8fab;
+        }
+
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92);
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .schedule-container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--glass-bg);
+            border-radius: 25px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .print-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .print-btn:hover { background: rgba(255,255,255,0.5); }
+
+        .title-panel {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            padding: 0.75rem 2.5rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(5px);
+            flex-grow: 1;
+            text-align: center;
+            margin: 0 20px;
+        }
+
+        .header h1 {
+            font-weight: 900;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--text-light);
+            margin: 0;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px); }
+        .tab-btn.active { background: var(--text-light); color: var(--primary-blue); box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        
+        .tab-content { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 10px; text-align: center; }
+        th, td { padding: 1rem 0.5rem; border-radius: 15px; vertical-align: middle; line-height: 1.4; min-height: 80px; font-size: 0.9rem; transition: all 0.3s ease; }
+
+        thead th { color: var(--text-light); font-weight: 700; font-size: 1.05rem; background-color: #ff8fab; }
+        td { background-color: var(--text-light); font-weight: 700; color: var(--text-dark); }
+        tbody td:first-child { color: var(--text-light); font-weight: 700; font-size: 1.05rem; width: 15%; }
+        
+        tbody tr:nth-of-type(1) td:first-child { background-color: #fec89a; }
+        tbody tr:nth-of-type(2) td:first-child { background-color: #90dbf4; }
+        tbody tr:nth-of-type(3) td:first-child { background-color: #a0c4ff; }
+        tbody tr:nth-of-type(4) td:first-child { background-color: #80ed99; }
+        tbody tr:nth-of-type(5) td:first-child { background-color: #bdb2ff; }
+        
+        td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); }
+        td .teacher, td .chapter { font-size: 0.85rem; color: #555; }
+        td .chapter { font-style: italic; }
+
+        /* --- Current Class Highlighter --- */
+        .current-class {
+            box-shadow: 0 0 15px 5px var(--glow-color);
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 10px 3px var(--glow-color); }
+            to { box-shadow: 0 0 20px 8px var(--glow-color); }
+        }
+
+        /* --- Print-Friendly Styles --- */
+        @media print {
+            body { background: none; padding: 0; }
+            .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; }
+            .header, .tab-navigation { display: none; }
+            td, th { border: 1px solid #ccc; }
+            td .subject { color: #000; }
+            td .teacher, td .chapter { color: #333; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="schedule-container">
+        <header class="header">
+            <button class="print-btn" id="print-button">🖨️ Print</button>
+            <div class="title-panel">
+                <h1>Class Schedule</h1>
+            </div>
+            <!-- Empty div for spacing -->
+            <div style="width: 86px;"></div> 
+        </header>
+
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="teachers">Teachers</button>
+            <button class="tab-btn" data-tab="subjects">Subjects</button>
+            <button class="tab-btn" data-tab="chapters">Chapters</button>
+            <button class="tab-btn" data-tab="all">All Combined</button>
+            <button class="tab-btn" data-tab="notice">Notice Board</button>
+        </nav>
+
+        <div class="content-wrapper">
+            <!-- Tables will be dynamically generated by JavaScript -->
+            <div id="teachers" class="tab-content active"><table><tbody id="teachers-body"></tbody></table></div>
+            <div id="subjects" class="tab-content"><table><tbody id="subjects-body"></tbody></table></div>
+            <div id="chapters" class="tab-content"><table><tbody id="chapters-body"></tbody></table></div>
+            <div id="all" class="tab-content"><table><tbody id="all-body"></tbody></table></div>
+            <div id="notice" class="tab-content"><p>Loading notices...</p></div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ===================================================================
+        // 1. CENTRAL DATA SOURCE - EDIT ALL YOUR ROUTINE INFO HERE
+        // ===================================================================
+        
+        const teacherDetails = {
+            'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam',
+            'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel',
+            'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul',
+            'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)'
+        };
+
+        const routineData = {
+            // Format: 'DAY_TIMESLOT': { teacher: 'CODE', subject: '...', chapter: '...' }
+            // Or just a string for special cases like 'NM-PHY'
+            'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+            'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' },
+            'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' },
+            'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' },
+
+            'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+            'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+            'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' },
+            'MONDAY_4': 'NM-PHY',
+
+            'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' },
+            'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+            'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' },
+            'TUESDAY_4': 'STAT-NM',
+
+            'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+            'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+            'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+            'WEDNESDAY_4': 'NM-ARJ',
+
+            'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' },
+            'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' },
+            'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+            'THURSDAY_4': 'NM-MR'
+        };
+
+        const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
+        const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
+
+        // ===================================================================
+        // 2. CORE LOGIC - This section reads the data and builds the website
+        // ===================================================================
+        
+        function generateTables() {
+            const bodies = {
+                teachers: document.getElementById('teachers-body'),
+                subjects: document.getElementById('subjects-body'),
+                chapters: document.getElementById('chapters-body'),
+                all: document.getElementById('all-body')
+            };
+
+            // Create table headers
+            const headerRow = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`;
+            for (const key in bodies) {
+                bodies[key].parentElement.innerHTML = headerRow + bodies[key].parentElement.innerHTML;
+            }
+
+            // Create table rows from data
+            days.forEach(day => {
+                const rows = {
+                    teachers: `<tr><td><strong>${day}</strong></td>`,
+                    subjects: `<tr><td><strong>${day}</strong></td>`,
+                    chapters: `<tr><td><strong>${day}</strong></td>`,
+                    all: `<tr><td><strong>${day}</strong></td>`
+                };
+
+                timeSlots.forEach((time, index) => {
+                    const key = `${day}_${index + 1}`;
+                    const data = routineData[key];
+
+                    if (typeof data === 'string') {
+                        // Handle special cases like 'NM-PHY'
+                        rows.teachers += `<td>${data}</td>`;
+                        rows.subjects += `<td>${data}</td>`;
+                        rows.chapters += `<td>${data}</td>`;
+                        rows.all += `<td>${data}</td>`;
+                    } else if (data) {
+                        // Handle regular class data
+                        rows.teachers += `<td>${teacherDetails[data.teacher]}<br>(${data.teacher})</td>`;
+                        rows.subjects += `<td>${data.subject}</td>`;
+                        rows.chapters += `<td>${data.chapter}</td>`;
+                        rows.all += `<td>
+                            <div class="subject">${data.subject}</div>
+                            <div class="teacher">${teacherDetails[data.teacher]} (${data.teacher})</div>
+                            <div class="chapter">${data.chapter}</div>
+                        </td>`;
+                    } else {
+                        // Handle empty slots
+                        rows.teachers += '<td></td>';
+                        rows.subjects += '<td></td>';
+                        rows.chapters += '<td></td>';
+                        rows.all += '<td></td>';
+                    }
+                });
+
+                for (const key in rows) {
+                    bodies[key].innerHTML += rows[key] + '</tr>';
+                }
+            });
+        }
+        
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            let noticeLoaded = false;
+
+            async function loadNoticeContent() {
+                if (!noticeLoaded) {
+                    try {
+                        const response = await fetch('notice.html');
+                        if (!response.ok) throw new Error('notice.html not found!');
+                        const content = await response.text();
+                        document.getElementById('notice').innerHTML = content;
+                        noticeLoaded = true;
+                    } catch (error) {
+                        console.error('Could not load notices:', error);
+                        document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`;
+                    }
+                }
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetTabId = tab.dataset.tab;
+                    if (targetTabId === 'notice') loadNoticeContent();
+                    
+                    tabs.forEach(item => item.classList.remove('active'));
+                    contents.forEach(item => item.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(targetTabId).classList.add('active');
+                });
+            });
+        }
+        
+        function highlightCurrentClass() {
+            const now = new Date();
+            const currentDayIndex = now.getDay(); // Sunday: 0, Monday: 1, etc.
+            const currentTime = now.getHours() + now.getMinutes() / 60; // e.g., 10:30 becomes 10.5
+
+            // Map Date.getDay() to our 'days' array index
+            const dayMap = [0, 1, 2, 3, 4, 5, -1]; // Sunday=0...Thursday=4, Friday=5, Saturday=-1
+            const dayIndex = dayMap[currentDayIndex];
+
+            if (dayIndex === -1 || dayIndex > 4) return; // Not a class day
+
+            let timeIndex = -1;
+            const timeRanges = [
+                { start: 9.75, end: 10.5 },   // 9:45 - 10:30
+                { start: 10.5, end: 11.25 },  // 10:30 - 11:15
+                { start: 11.25, end: 12.0 },  // 11:15 - 12:00
+                { start: 12.0, end: 12.75 }   // 12:00 - 12:45
+            ];
+
+            for (let i = 0; i < timeRanges.length; i++) {
+                if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) {
+                    timeIndex = i;
+                    break;
+                }
+            }
+
+            if (timeIndex !== -1) {
+                // Highlight the cell in the "All Combined" table
+                const cellToHighlight = document.querySelector(`#all-body tr:nth-child(${dayIndex + 1}) td:nth-child(${timeIndex + 2})`);
+                if (cellToHighlight) {
+                    cellToHighlight.classList.add('current-class');
+                }
+            }
+        }
+
+        function setupPrint() {
+            document.getElementById('print-button').addEventListener('click', () => {
+                window.print();
+            });
+        }
+
+        // --- Run all setup functions ---
+        generateTables();
+        setupTabs();
+        highlightCurrentClass();
+        setupPrint();
+    });
+    </script>
+</body>
+</html>
