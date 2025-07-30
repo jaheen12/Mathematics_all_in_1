@@ -15,7 +15,9 @@
             --text-dark: #333;
             --text-light: #fff;
             --shadow-color: rgba(31, 38, 135, 0.3);
-            --glow-color: #ff8fab;
+            /* --- NEW: Defined colors for our two highlights --- */
+            --glow-current-strong: #ff8fab; /* The vibrant glow for the current class */
+            --glow-next-day-light: #90dbf4;   /* The subtle glow for the next day's schedule */
         }
         body { margin: 0; padding: 2rem; font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .schedule-container { width: 100%; max-width: 1200px; background: var(--glass-bg); border-radius: 25px; padding: 2rem; box-shadow: 0 8px 32px var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
@@ -44,8 +46,22 @@
         td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); }
         td .teacher, td .chapter { font-size: 0.85rem; color: #555; }
         td .chapter { font-style: italic; }
-        .current-class { box-shadow: 0 0 15px 5px var(--glow-color); animation: glow 2s infinite alternate; }
-        @keyframes glow { from { box-shadow: 0 0 10px 3px var(--glow-color); } to { box-shadow: 0 0 20px 8px var(--glow-color); } }
+
+        /* --- NEW: Highlighting System --- */
+        .next-day-highlight {
+            box-shadow: 0 0 12px 3px var(--glow-next-day-light);
+        }
+        .current-class {
+            box-shadow: 0 0 15px 5px var(--glow-current-strong);
+            animation: glow-strong 2s infinite alternate;
+            z-index: 10; /* Ensures it appears on top */
+            position: relative;
+        }
+        @keyframes glow-strong {
+            from { box-shadow: 0 0 10px 3px var(--glow-current-strong); }
+            to { box-shadow: 0 0 20px 8px var(--glow-current-strong); }
+        }
+
         @media print { body { background: none; padding: 0; } .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; } .header, .tab-navigation { display: none; } td, th { border: 1px solid #ccc; } td .subject { color: #000; } td .teacher, td .chapter { color: #333; } }
     </style>
 </head>
@@ -54,9 +70,7 @@
     <div class="schedule-container">
         <header class="header">
             <button class="print-btn" id="print-button">🖨️ Print</button>
-            <div class="title-panel">
-                <h1>Class Schedule</h1>
-            </div>
+            <div class="title-panel"><h1>Class Schedule</h1></div>
             <div style="width: 86px;"></div> 
         </header>
 
@@ -81,91 +95,48 @@
     document.addEventListener('DOMContentLoaded', function() {
 
         // ===================================================================
-        // 1. CENTRAL DATA SOURCE - EDIT ALL YOUR ROUTINE INFO HERE
+        // 1. CENTRAL DATA SOURCE 
         // ===================================================================
-        
-        const teacherDetails = {
-            'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam',
-            'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel',
-            'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul',
-            'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)'
-        };
-
+        const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
         const routineData = {
-            'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
-            'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' },
-            'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' },
-            'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' },
-            'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
-            'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
-            'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' },
-            'MONDAY_4': 'NM-PHY',
-            'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' },
-            'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
-            'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' },
-            'TUESDAY_4': 'STAT-NM',
-            'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
-            'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
-            'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
-            'WEDNESDAY_4': 'NM-ARJ',
-            'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' },
-            'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' },
-            'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
-            'THURSDAY_4': 'NM-MR'
+            'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' }, 'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' }, 'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' },
+            'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' }, 'MONDAY_4': 'NM-PHY',
+            'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' }, 'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'TUESDAY_4': 'STAT-NM',
+            'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'WEDNESDAY_4': 'NM-ARJ',
+            'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' }, 'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'THURSDAY_4': 'NM-MR'
         };
-
         const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
         const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
 
         // ===================================================================
-        // 2. CORE LOGIC (CORRECTED VERSION)
+        // 2. CORE LOGIC & SETUP FUNCTIONS
         // ===================================================================
         
         function generateTables() {
-            const containers = {
-                teachers: document.getElementById('teachers'),
-                subjects: document.getElementById('subjects'),
-                chapters: document.getElementById('chapters'),
-                all: document.getElementById('all')
-            };
-
+            const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') };
             const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`;
-
             for (const type in containers) {
-                if (!containers[type]) continue; // Failsafe
-
+                if (!containers[type]) continue;
                 let tableBodyHTML = '<tbody>';
-
                 days.forEach(day => {
                     tableBodyHTML += `<tr><td><strong>${day}</strong></td>`;
                     timeSlots.forEach((time, index) => {
                         const key = `${day}_${index + 1}`;
                         const data = routineData[key];
                         let cellContent = '';
-
-                        if (typeof data === 'string') {
-                            cellContent = data;
-                        } else if (data) {
+                        if (typeof data === 'string') { cellContent = data; } 
+                        else if (data) {
                             switch (type) {
-                                case 'teachers':
-                                    cellContent = `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})`;
-                                    break;
-                                case 'subjects':
-                                    cellContent = data.subject;
-                                    break;
-                                case 'chapters':
-                                    cellContent = data.chapter;
-                                    break;
-                                case 'all':
-                                    cellContent = `<div class="subject">${data.subject}</div><div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div><div class="chapter">${data.chapter}</div>`;
-                                    break;
+                                case 'teachers': cellContent = `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})`; break;
+                                case 'subjects': cellContent = data.subject; break;
+                                case 'chapters': cellContent = data.chapter; break;
+                                case 'all': cellContent = `<div class="subject">${data.subject}</div><div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div><div class="chapter">${data.chapter}</div>`; break;
                             }
                         }
                         tableBodyHTML += `<td>${cellContent}</td>`;
                     });
                     tableBodyHTML += '</tr>';
                 });
-
                 tableBodyHTML += '</tbody>';
                 containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`;
             }
@@ -175,7 +146,6 @@
             const tabs = document.querySelectorAll('.tab-btn');
             const contents = document.querySelectorAll('.tab-content');
             let noticeLoaded = false;
-
             async function loadNoticeContent() {
                 if (!noticeLoaded) {
                     try {
@@ -184,13 +154,9 @@
                         const content = await response.text();
                         document.getElementById('notice').innerHTML = content;
                         noticeLoaded = true;
-                    } catch (error) {
-                        console.error('Could not load notices:', error);
-                        document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`;
-                    }
+                    } catch (error) { console.error('Could not load notices:', error); document.getElementById('notice').innerHTML = `<p>Error: Could not load the notice board.</p>`; }
                 }
             }
-
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const targetTabId = tab.dataset.tab;
@@ -203,45 +169,57 @@
             });
         }
         
-        function highlightCurrentClass() {
+        // --- NEW DUAL-HIGHLIGHTING SYSTEM ---
+        function setupHighlights() {
             const now = new Date();
-            const currentDayIndex = now.getDay();
+            const currentDayIndex = now.getDay(); // Sunday: 0, ... Thursday: 4, Friday: 5, Saturday: 6
             const currentTime = now.getHours() + now.getMinutes() / 60;
-            const dayMap = [0, 1, 2, 3, 4, 5, -1]; 
-            const dayIndex = dayMap[currentDayIndex];
-            if (dayIndex === -1 || dayIndex > 4) return;
-            let timeIndex = -1;
-            const timeRanges = [
-                { start: 9.75, end: 10.5 }, { start: 10.5, end: 11.25 },
-                { start: 11.25, end: 12.0 }, { start: 12.0, end: 12.75 }
-            ];
-            for (let i = 0; i < timeRanges.length; i++) {
-                if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) {
-                    timeIndex = i;
-                    break;
-                }
+            const classEndTime = 12.75; // 12:45 PM
+
+            const dayMap = [0, 1, 2, 3, 4, 5, 6]; 
+
+            // Highlight NEXT DAY's classes
+            let nextDayToHighlight = -1;
+            if (dayMap[currentDayIndex] < 4 && currentTime >= classEndTime) {
+                // It's a weekday after classes have ended
+                nextDayToHighlight = dayMap[currentDayIndex] + 1;
+            } else if (dayMap[currentDayIndex] === 4 && currentTime >= classEndTime) {
+                // It's Thursday after classes, highlight Sunday
+                nextDayToHighlight = 0; // Sunday
+            } else if (dayMap[currentDayIndex] > 4) {
+                // It's Friday or Saturday, highlight Sunday
+                nextDayToHighlight = 0; // Sunday
             }
-            if (timeIndex !== -1) {
-                const tableIds = ['teachers', 'subjects', 'chapters', 'all'];
-                tableIds.forEach(id => {
-                    const cellToHighlight = document.querySelector(`#${id} table tbody tr:nth-child(${dayIndex + 1}) td:nth-child(${timeIndex + 2})`);
-                    if (cellToHighlight) {
-                        cellToHighlight.classList.add('current-class');
+            
+            if (nextDayToHighlight !== -1) {
+                document.querySelectorAll(`table tbody tr:nth-child(${nextDayToHighlight + 1}) td:not(:first-child)`)
+                    .forEach(cell => cell.classList.add('next-day-highlight'));
+            }
+
+            // Highlight CURRENT class (stronger highlight)
+            const todayIndex = dayMap[currentDayIndex];
+            if (todayIndex >= 0 && todayIndex <= 4) { // Only check on weekdays
+                let timeIndex = -1;
+                const timeRanges = [ { start: 9.75, end: 10.5 }, { start: 10.5, end: 11.25 }, { start: 11.25, end: 12.0 }, { start: 12.0, end: 12.75 } ];
+                for (let i = 0; i < timeRanges.length; i++) {
+                    if (currentTime >= timeRanges[i].start && currentTime < timeRanges[i].end) {
+                        timeIndex = i;
+                        break;
                     }
-                });
+                }
+                if (timeIndex !== -1) {
+                    document.querySelectorAll(`table tbody tr:nth-child(${todayIndex + 1}) td:nth-child(${timeIndex + 2})`)
+                        .forEach(cell => cell.classList.add('current-class'));
+                }
             }
         }
 
-        function setupPrint() {
-            document.getElementById('print-button').addEventListener('click', () => {
-                window.print();
-            });
-        }
+        function setupPrint() { document.getElementById('print-button').addEventListener('click', () => window.print()); }
 
         // --- Run all setup functions ---
         generateTables();
         setupTabs();
-        highlightCurrentClass();
+        setupHighlights();
         setupPrint();
     });
     </script>
