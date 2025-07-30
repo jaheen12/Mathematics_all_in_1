@@ -15,9 +15,9 @@
             --text-dark: #333;
             --text-light: #fff;
             --shadow-color: rgba(31, 38, 135, 0.3);
-            /* --- NEW: Background colors for highlighting --- */
-            --bg-current-strong: #ff8fab; /* Vibrant Pink for current class */
-            --bg-next-day-light: #fefcbf;   /* Soft Yellow for next day's schedule */
+            /* --- UPDATED: New Sky Blue & Orange Highlight Colors --- */
+            --bg-current-strong: #ff9800; /* Vibrant Orange for current class */
+            --bg-next-day-light: #b3e5fc;   /* Soft Sky Blue for next day's schedule */
         }
         body { margin: 0; padding: 2rem; font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #3D52A0, #7071E8, #C471ED, #F77D92); background-attachment: fixed; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .schedule-container { width: 100%; max-width: 1200px; background: var(--glass-bg); border-radius: 25px; padding: 2rem; box-shadow: 0 8px 32px var(--shadow-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); }
@@ -46,29 +46,22 @@
         td .subject { font-weight: 900; font-size: 1rem; color: var(--primary-blue); }
         td .teacher, td .chapter { font-size: 0.85rem; color: #555; }
         td .chapter { font-style: italic; }
-
-        /* --- UPDATED: Background Color Highlighting System --- */
         .next-day-highlight {
             background-color: var(--bg-next-day-light);
             transform: scale(1.02);
         }
         .current-class {
             background-color: var(--bg-current-strong);
-            color: var(--text-light); /* Make main text white */
+            color: var(--text-light);
             transform: scale(1.05);
             animation: pulse-current 1.5s infinite alternate;
             z-index: 10;
             position: relative;
         }
-        /* Make sure nested text also becomes white for readability */
         .current-class .subject, .current-class .teacher, .current-class .chapter {
             color: var(--text-light);
         }
-        @keyframes pulse-current {
-            from { opacity: 1; }
-            to { opacity: 0.9; }
-        }
-
+        @keyframes pulse-current { from { opacity: 1; } to { opacity: 0.9; } }
         @media print { body { background: none; padding: 0; } .schedule-container { box-shadow: none; border: none; backdrop-filter: none; max-width: 100%; } .header, .tab-navigation { display: none; } td, th { border: 1px solid #ccc; } td { background-color: #fff !important; color: #000 !important; } td div { color: #000 !important; } }
     </style>
 </head>
@@ -94,9 +87,7 @@
             <div id="notice" class="tab-content"><p>Loading notices...</p></div>
         </div>
     </div>
-
     <script>
-        // The entire SCRIPT section remains exactly the same. No changes are needed here.
         document.addEventListener('DOMContentLoaded', function() {
             const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
             const routineData = {
