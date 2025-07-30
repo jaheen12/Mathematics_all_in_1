@@ -76,15 +76,15 @@ const bookDatabase = [
 // Part 3: Google Drive Folder Links
 // *** YOUR JOB: Replace '#' with your actual Google Drive Folder links ***
 const driveLinks = {
-  "1_Calculus": "#",
-  "2_Linear_Algebra": "#",
-  "3_Real_Analysis": "#",
-  "4_Abstract_Algebra": "#",
-  "5_Complex_Analysis": "#",
-  "6_Differential_Equations": "#",
-  "7_Foundational_Math": "#",
-  "8_Geometry": "#",
-  "9_Statistics_and_Probability": "#",
-  "10_Numerical_Analysis": "#",
-  "Other_Resources": "#"
+  "1_Calculus": "https://drive.google.com/drive/folders/15RBbX6x97PLLSceJHQIIV2bwLLdBjxTR",
+  "2_Linear_Algebra": "https://drive.google.com/drive/folders/15Vs0Iyl1eoKlDMx-GBsd0le0mzXbnAZn",
+  "3_Real_Analysis": "https://drive.google.com/drive/folders/15Z87DZEudqa_FlNFiCwfOggnv5FADyFC",
+  "4_Abstract_Algebra": "https://drive.google.com/drive/folders/15dYx-7kvWcHCg6y7YSpZnV5GbrLYm5Wt",
+  "5_Complex_Analysis": "https://drive.google.com/drive/folders/15efyI9TNIYfbukhZkcuAryqLApQmPCCZ",
+  "6_Differential_Equations": "https://drive.google.com/drive/folders/15pfJ8cfiSxBAukn21x7Bra1M1P_THvrH",
+  "7_Foundational_Math": "https://drive.google.com/drive/folders/15tlgVAzbeY_WBilMswTDIk0MurdE9d6y",
+  "8_Geometry": "https://drive.google.com/drive/folders/15v7PvUsmXnbeSqdTNrPHgjROkOJx4Ug3",
+  "9_Statistics_and_Probability": "https://drive.google.com/drive/folders/15y1ScpllM55AoeaUuQkJe9ToId_nQJKS",
+  "10_Numerical_Analysis": "https://drive.google.com/drive/folders/1F8KNsZ00qs5E6EmNIZm6KRKaUgc7aOAt",
+  "Other_Resources": "https://drive.google.com/drive/folders/15yeLj05b2xKBR5UjGBXNxlqzEbkXzs8V"
 };
