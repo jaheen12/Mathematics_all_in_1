@@ -139,7 +139,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Previous JS Data and Functions remain the same...
             const teacherDetails = { 'AH': 'Aynul Habib', 'AM': 'Md. Alam Mondal', 'RI': 'Md. Rafiqul Islam', 'FI': 'Fokhrol Islam', 'AR': 'Anisur Rahman', 'ARJ': 'Arifur Rahman Jewel', 'MR': 'Mizanur Rahman', 'NS': 'Nasrin Sultana', 'NP': 'Nirmal Chandra Paul', 'NM': 'Statistics (NM)', 'PHY': 'Physics (NM)' };
-            const routineData = { 'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' }, 'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' }, 'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' }, 'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' }, 'MONDAY_4': 'NM-PHY', 'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' }, 'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'TUESDAY_3': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'TUESDAY_4': 'STAT-NM', 'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' }, 'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' }, 'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' }, 'WEDNESDAY_4': 'NM-ARJ', 'THURSDAY_1': { teacher: 'MR', subject: 'Upcoming', chapter: 'Upcoming' }, 'THURSDAY_2': { teacher: 'FI', subject: 'Calculus', chapter: 'Differential Calculus' }, 'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' }, 'THURSDAY_4': 'NM-MR' };
+                        const routineData = {
+                'SUNDAY_1': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+                'SUNDAY_2': { teacher: 'AM', subject: 'Fundamentals of Math', chapter: 'Elements of Logic' },
+                'SUNDAY_3': { teacher: 'NM', subject: 'Statistics', chapter: 'Statistics' },
+                'SUNDAY_4': { teacher: 'PHY', subject: 'Physics', chapter: 'Physics' },
+
+                'MONDAY_1': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+                'MONDAY_2': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+                'MONDAY_3': { teacher: 'ARJ', subject: 'Calculus', chapter: 'Integral Calculus' },
+                'MONDAY_4': 'NM-PHY',
+
+                'TUESDAY_1': { teacher: 'RI', subject: 'Linear Algebra', chapter: 'Vectors in R^n and C^n' },
+                'TUESDAY_2': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+                // --- UPDATED TUESDAY @ 11:15 (FI) ---
+                'TUESDAY_3': { teacher: 'FI', subject: 'Fundamentals of Math', chapter: 'Complex Number' },
+                'TUESDAY_4': 'STAT-NM',
+
+                'WEDNESDAY_1': { teacher: 'NS', subject: 'Linear Algebra', chapter: 'Matrices & Determinants' },
+                'WEDNESDAY_2': { teacher: 'AH', subject: 'Analytic & Vector Geo.', chapter: 'Upcoming' },
+                'WEDNESDAY_3': { teacher: 'AR', subject: 'Analytic & Vector Geo.', chapter: 'Transformation of coordinates' },
+                'WEDNESDAY_4': 'NM-ARJ',
+
+                // --- UPDATED THURSDAY SCHEDULE ---
+                'THURSDAY_1': { teacher: 'MR', subject: 'Calculus', chapter: 'Function & their graph' },
+                // --- UPDATED THURSDAY @ 10:30 (FI) ---
+                'THURSDAY_2': { teacher: 'FI', subject: 'Fundamentals of Math', chapter: 'Complex Number' },
+                'THURSDAY_3': { teacher: 'NP', subject: 'Fundamentals of Math', chapter: 'Real Number System' },
+                'THURSDAY_4': 'NM-MR'
+            };
             const timeSlots = ['9:45–10:30', '10:30–11:15', '11:15–12:00', '12:00–12:45'];
             const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
             function generateTables() { const containers = { teachers: document.getElementById('teachers'), subjects: document.getElementById('subjects'), chapters: document.getElementById('chapters'), all: document.getElementById('all') }; const headerHTML = `<thead><tr><th>DAY</th><th>${timeSlots.join('</th><th>')}</th></tr></thead>`; for (const type in containers) { if (!containers[type]) continue; let tableBodyHTML = '<tbody>'; days.forEach(day => { tableBodyHTML += `<tr><td><strong>${day}</strong></td>`; timeSlots.forEach((time, index) => { const key = `${day}_${index + 1}`; const data = routineData[key]; let cellContent = ''; if (typeof data === 'string') { cellContent = data; }  else if (data) { switch (type) { case 'teachers': cellContent = `${teacherDetails[data.teacher] || data.teacher}<br>(${data.teacher})`; break; case 'subjects': cellContent = data.subject; break; case 'chapters': cellContent = data.chapter; break; case 'all': cellContent = `<div class="subject">${data.subject}</div><div class="teacher">${teacherDetails[data.teacher] || data.teacher} (${data.teacher})</div><div class="chapter">${data.chapter}</div>`; break; } } tableBodyHTML += `<td>${cellContent}</td>`; }); tableBodyHTML += '</tr>'; }); tableBodyHTML += '</tbody>'; containers[type].innerHTML = `<table>${headerHTML}${tableBodyHTML}</table>`; } }
